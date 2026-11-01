@@ -63,6 +63,7 @@
                 li.appendChild(btn1);
                 btn1.classList.add("btn");
                 btn1.classList.add("btn-primary");
+                btn1.addEventListener("click", ()=> callUpdateBtn(Todo));
 
                 const btn2 = document.createElement("button");
                 btn2.innerText = "Delete";
@@ -91,7 +92,7 @@
 
         async function updateTodo(id, updatedData){
             const response = await fetch(`${URL}/${id}`, {
-                method:"PATCH",
+                method:"PUT",
                 headers:{
                     "Content-Type" : "application/json"
                 },
@@ -147,7 +148,6 @@
             addTodo(todo);
         }
 
-
         function callDelete(){
             event.preventDefault();
 
@@ -158,6 +158,50 @@
             const id = li.dataset.id;
             
             deleteTodo(id);
+        }
+
+        function callUpdateBtn(Todo){
+            event.preventDefault();
+
+            const btn = document.querySelector("#updateButton");
+            btn.hidden = false;
+
+            const title = document.querySelector("#title");
+            const category = document.querySelector("#category");
+            const due_day = document.querySelector("#due_day");
+            const priority = document.querySelector("#priority");
+            const type = document.querySelector("#type");
+
+            title.value = Todo.title;
+            category.value = Todo.category;
+            due_day.value = Todo.due_day;
+            priority.value = Todo.priority;
+            type.value = Todo.type;
+
+            const li = event.target.parentElement;
+
+            const id = li.dataset.id;
+
+            btn.addEventListener("click", ()=>callUpdate(id))
+        }
+
+        function callUpdate(id){
+            alert("작동")
+            event.preventDefault();
+
+            const title = document.querySelector("#title");
+            const category = document.querySelector("#category");
+            const due_day = document.querySelector("#due_day");
+            const priority = document.querySelector("#priority");
+            const type = document.querySelector("#type");
+
+            todo.title = title.value;
+            todo.category = category.value;
+            todo.due_day = due_day.value;
+            todo.priority = priority.value;
+            todo.type = type.value;
+
+            updateTodo(id,todo);
         }
 
         window.addEventListener("load",function(){
