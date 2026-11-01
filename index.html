@@ -45,6 +45,22 @@
             await loadStudents();
         }
 
+        async function updateStudent(id, updatedData){
+            const response = await fetch(`${URL}/${id}`, {
+                method:"PATCH",
+                headers:{
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if(!response){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadStudents();
+        }
+
         window.addEventListener("load",function(){
             const btn = document.querySelector("#btn");
             btn.addEventListener("click", loadStudents);
