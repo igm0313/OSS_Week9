@@ -36,7 +36,6 @@
             id: ""
         };
 
-        let idNum = 1;
 
         async function loadTodos(){
             const response = await fetch(URL);
@@ -52,11 +51,10 @@
         function renderTodos(Todos){
             const list = document.querySelector("#TodoList");
             list.replaceChildren();
-            idNum = 1;
 
             Todos.forEach(Todo => {
                 const li = document.createElement("li");
-                li.textContent = `${Todo.title} (${Todo.category})`;
+                li.textContent = `${Todo.id}. ${Todo.title} (${Todo.category})`;
                 list.appendChild(li);
 
                 const btn1 = document.createElement("button");
@@ -70,8 +68,7 @@
                 li.appendChild(btn2);
                 btn2.classList.add("btn");
                 btn2.classList.add("btn-danger");
-
-                idNum += 1;
+                btn2.addEventListener("click", callDelete);
             });
         }
 
@@ -128,14 +125,42 @@
             const priority = document.querySelector("#priority");
             const type = document.querySelector("#type");
 
+            if(title.value == ""){
+                alert("제목을 입력하세요.");
+                title.focus();
+                return;
+            }
+
+            if(!due_day.checkValidity()){
+                alert("날짜를 입력하세요.");
+                due_day.focus();
+                return;
+            }
+
             todo.title = title.value;
             todo.category = category.value;
             todo.due_day = due_day.value;
             todo.priority = priority.value;
             todo.type = type.value;
-            todo.id = idNum++;
 
-            console.log(todo);
+            addTodo(todo);
+        }
+
+
+        function callDelete(){
+            event.preventDefault();
+
+            if(!confirm("삭제하시겠습니까?")) return;
+
+            const li = event.target.parentElement;
+    
+            // 부모(ul/ol)의 자식 노드들 중 현재 li의 인덱스 찾기
+            const parentList = li.parentElement;
+            const index = Array.from(parentList.children).indexOf(li);
+
+            const id = index+1;
+            
+            deleteTodo(id);
         }
 
         window.addEventListener("load",function(){

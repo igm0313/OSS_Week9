@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        div{
+            display: flex;
+        }
+
+        input{
+            margin-right: 5px;
+        }
+    </style>
     <script>
         const URL = "https://6adea6e04e88f1bba4a53a55.mockapi.io/Student";
 
@@ -26,6 +35,14 @@
                 const li = document.createElement("li");
                 li.textContent = `${student.name} (${student.age})`;
                 list.appendChild(li);
+
+                const btn1 = document.createElement("button");
+                btn1.innerText = "Update";
+                li.appendChild(btn1);
+
+                const btn2 = document.createElement("button");
+                btn2.innerText = "Delete";
+                li.appendChild(btn2);
             });
         }
 
@@ -38,7 +55,7 @@
                 body: JSON.stringify(student)
             });
 
-            if(!response){
+            if(!response.ok){
                 throw new Error(`HTTP ${response.status}`)
             }
 
@@ -54,12 +71,24 @@
                 body: JSON.stringify(updatedData)
             });
 
-            if(!response){
+            if(!response.ok){
                 throw new Error(`HTTP ${response.status}`)
             }
 
             await loadStudents();
         }
+
+        async function deleteStudent(id){
+            const response = await fetch(`${URL}/${id}`,{
+                method:"DELETE"
+            });
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadStudents();
+        }   
 
         window.addEventListener("load",function(){
             const btn = document.querySelector("#btn");
@@ -68,10 +97,17 @@
     </script>
 </head>
 <body>
+    <div>
+    <input type="text" placeholder="name" id="name">
+    <input type="text" placeholder="age" id="age">
+    <input type="text" placeholder="major" id="major">
+    <button id="addBtn">ADD</button>
+    </div>
+
     <ul id="studentList">
         
     </ul>
 
-    <button id="btn">click!</button>
+    <button id="btn">Load</button>
 </body>
 </html>
