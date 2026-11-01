@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #timer{
+            background-color: yellow;
+            text-align: center;
+            height: 7rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        #buttons{
+            display: flex;
+            justify-content: center;
+        }
+
+        button{
+            margin: 1rem;
+            width: 5rem;
+            height: 3rem;
+        }
+    </style>
+
+    <script>
+        window.addEventListener("load", function(e){
+            const btn1 = document.querySelector("#start");
+            const btn2 = document.querySelector("#stop");
+
+            btn1.addEventListener("click",startTimer);
+            btn2.addEventListener("click",stopTimer);
+        });
+
+        function startTimer(){
+            const text = document.querySelector("#text");
+
+            let count = 0;
+
+            const timerId = setInterval(() =>{
+                count++;
+                text.textContent = count;
+            },1000)
+        }
+
+        function stopTimer(){
+            clearInterval();
+        }
+    </script>
+</head>
+<body>
+    <div id="timer">
+        <h1 id="text">0</h1>
+    </div>
+
+    <div id="buttons">
+        <button id="start" value="시작">시작</button>
+        <button id="stop" value="중지">중지</button>
+    </div>
+</body>
+</html>
+

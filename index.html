@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        const URL = "https://6adea6e04e88f1bba4a53a55.mockapi.io/Student";
+
+        async function loadStudents(){
+            const response = await fetch(URL);
+
+            if(!response.ok){
+                throw new Error('HTTP ${response.statue}');
+            }
+
+            const students = await response.json();
+            renderStudents(students);
+        }
+
+        function renderStudents(students){
+            const list = document.querySelector("#studentList");
+            list.replaceChildren();
+
+            students.forEach(student => {
+                const li = document.createElement("li");
+                li.textContent = `${student.name} (${student.age})`;
+                list.appendChild(li);
+            });
+        }
+
+        window.addEventListener("load",function(){
+            const btn = document.querySelector("#btn");
+            btn.addEventListener("click", loadStudents);
+        })
+    </script>
+</head>
+<body>
+    <ul id="studentList">
+        
+    </ul>
+
+    <button id="btn">click!</button>
+</body>
+</html>
