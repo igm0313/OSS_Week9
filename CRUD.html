@@ -54,7 +54,8 @@
 
             Todos.forEach(Todo => {
                 const li = document.createElement("li");
-                li.textContent = `${Todo.id}. ${Todo.title} (${Todo.category})`;
+                li.textContent = `${Todo.title} (${Todo.category})`;
+                li.dataset.id = Todo.id;
                 list.appendChild(li);
 
                 const btn1 = document.createElement("button");
@@ -153,12 +154,8 @@
             if(!confirm("삭제하시겠습니까?")) return;
 
             const li = event.target.parentElement;
-    
-            // 부모(ul/ol)의 자식 노드들 중 현재 li의 인덱스 찾기
-            const parentList = li.parentElement;
-            const index = Array.from(parentList.children).indexOf(li);
 
-            const id = index+1;
+            const id = li.dataset.id;
             
             deleteTodo(id);
         }
