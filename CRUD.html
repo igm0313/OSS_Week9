@@ -54,7 +54,7 @@
 
             Todos.forEach(Todo => {
                 const li = document.createElement("li");
-                li.textContent = `${Todo.title} (${Todo.category})`;
+                li.textContent = `${Todo.title} (${Todo.category}) ${Todo.due_day}까지. 우선 순위: ${Todo.priority} / 상태: ${Todo.type}`;
                 li.dataset.id = Todo.id;
                 list.appendChild(li);
 
@@ -254,12 +254,32 @@
             updateTodo(id,todo);
         }
 
+        async function filtering(){
+            event.preventDefault();
+
+            const response = await fetch(URL);
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const Todos = await response.json();
+
+            const category = document.querySelector("#categorySearch");
+            const todoFilter = Todos.filter(Todo => Todo.category === category.value)
+
+            renderTodos(todoFilter);
+        }
+
         window.addEventListener("load",function(){
             const btn = document.querySelector("#btn");
             btn.addEventListener("click", loadTodos);
 
             const addBtn = document.querySelector("#addSchedule");
             addBtn.addEventListener("click",callAdd);
+
+            const searchBtn = document.querySelector("#searchBtn");
+            searchBtn.addEventListener("click", filtering);
         })
     </script>
 </head>
@@ -296,6 +316,17 @@
         <button id="addSchedule" class="btn btn-primary">일정 추가</button>
         <button id="updateButton" class="btn btn-secondary" hidden>수정 완료</button>
     </form>
+
+    <form class="d-flex">
+        <select name="categorySearch" id="categorySearch" required>
+            <option value="" hidden selected>선택</option>
+            <option value="공부">공부</option>
+            <option value="운동">운동</option>
+            <option value="개인">개인</option>
+        </select>
+        <button id="searchBtn" class="btn btn-primary">검색</button>
+    </form>
+
     <button id="btn" class="btn btn-primary ms-auto">불러오기</button>
 
     <ul id="TodoList">
