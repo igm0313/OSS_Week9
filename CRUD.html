@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>Document</title>
+
+    <style>
+        #appSchedule{margin-left: 30px;}
+        .editButton{
+            margin-left: 20px;
+        }
+        #scheduleList{
+            margin-top: 20px;
+        }
+
+        h1{
+            font-size: 50px;
+            text-align: center;
+        }
+
+    </style>
+
+    <script>
+        const URL = "https://6adea6e04e88f1bba4a53a55.mockapi.io/Todo";
+
+        let todo = {
+            title: "",
+            category: "",
+            due_day: "",
+            priority: "",
+            type: "",
+            id: ""
+        };
+
+        let idNum = 1;
+
+        async function loadTodos(){
+            const response = await fetch(URL);
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const Todos = await response.json();
+            renderTodos(Todos);
+        }
+
+        function renderTodos(Todos){
+            const list = document.querySelector("#TodoList");
+            list.replaceChildren();
+            idNum = 1;
+
+            Todos.forEach(Todo => {
+                const li = document.createElement("li");
+                li.textContent = `${Todo.title} (${Todo.category})`;
+                list.appendChild(li);
+
+                const btn1 = document.createElement("button");
+                btn1.innerText = "Update";
+                li.appendChild(btn1);
+                btn1.classList.add("btn");
+                btn1.classList.add("btn-primary");
+
+                const btn2 = document.createElement("button");
+                btn2.innerText = "Delete";
+                li.appendChild(btn2);
+                btn2.classList.add("btn");
+                btn2.classList.add("btn-danger");
+
+                idNum += 1;
+            });
+        }
+
+        async function addTodo(Todo){
+            const response = await fetch(URL, {
+                method:"POST",
+                headers:{
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(Todo)
+            });
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadTodos();
+        }
+
+        async function updateTodo(id, updatedData){
+            const response = await fetch(`${URL}/${id}`, {
+                method:"PATCH",
+                headers:{
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadTodos();
+        }
+
+        async function deleteTodo(id){
+            const response = await fetch(`${URL}/${id}`,{
+                method:"DELETE"
+            });
+
+            if(!response.ok){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadTodos();
+        }   
+
+        function callAdd(){
+            event.preventDefault();
+
+            const title = document.querySelector("#title");
+            const category = document.querySelector("#category");
+            const due_day = document.querySelector("#due_day");
+            const priority = document.querySelector("#priority");
+            const type = document.querySelector("#type");
+
+            todo.title = title.value;
+            todo.category = category.value;
+            todo.due_day = due_day.value;
+            todo.priority = priority.value;
+            todo.type = type.value;
+            todo.id = idNum++;
+
+            console.log(todo);
+        }
+
+        window.addEventListener("load",function(){
+            const btn = document.querySelector("#btn");
+            btn.addEventListener("click", loadTodos);
+
+            const addBtn = document.querySelector("#addSchedule");
+            addBtn.addEventListener("click",callAdd);
+        })
+    </script>
+</head>
+
+<body>
+    <h1>To Do List</h1>
+
+    <form id="scheduleForm" class="d-flex">
+        <input type="text" id="title" placeholder="일정의 이름을 입력하세요." name="title" minlength="2" required>
+
+        <select name="category" id="category">
+            <option value="공부">공부</option>
+            <option value="운동">운동</option>
+            <option value="개인">개인</option>
+        </select>
+
+        <input type="date" id="due_day" name="due_day" min="2026-10-04" required>
+
+        <select name="priority" id="priority">
+            <option value="높음">높음</option>
+            <option value="중간">중간</option>
+            <option value="낮음">낮음</option>
+        </select>
+
+        <select name="type" id="type">
+            <option value="진행 전">진행 전</option>
+            <option value="진행 중">진행 중</option>
+            <option value="완료">완료</option>
+        </select>
+
+        <button id="addSchedule" class="btn btn-primary">일정 추가</button>
+        <button id="updateButton" class="btn btn-secondary" hidden>수정 완료</button>
+    </form>
+    <button id="btn">load</button>
+
+    <ul id="TodoList">
+    </ul>
+</body>
+
+</html>
