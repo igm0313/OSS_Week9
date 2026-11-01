@@ -11,7 +11,7 @@
             const response = await fetch(URL);
 
             if(!response.ok){
-                throw new Error('HTTP ${response.statue}');
+                throw new Error(`HTTP ${response.status}`);
             }
 
             const students = await response.json();
@@ -29,6 +29,21 @@
             });
         }
 
+        async function addStudent(student){
+            const response = await fetch(URL, {
+                method:"POST",
+                headers:{
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify(student)
+            });
+
+            if(!response){
+                throw new Error(`HTTP ${response.status}`)
+            }
+
+            await loadStudents();
+        }
 
         window.addEventListener("load",function(){
             const btn = document.querySelector("#btn");
